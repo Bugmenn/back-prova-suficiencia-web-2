@@ -1,6 +1,8 @@
+using MeuBackEndApi.Src.Interfaces;
+using MeuBackEndApi.Src.Objects;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MeuBackEndApi.Controllers
+namespace MeuBackEndApi.Src.Controllers
 {
     //[ApiController]
     //[Route("[controller]")]
@@ -36,10 +38,11 @@ namespace MeuBackEndApi.Controllers
     [Route("api/mensagem")]
     public class MensagemController : ControllerBase
     {
-        public class Pessoa
+        private readonly IMensagemService _mensagemService;
+
+        public MensagemController(IMensagemService mensagemService)
         {
-            public string Nome { get; set; }
-            public string Data { get; set; }
+            _mensagemService = mensagemService;
         }
 
         [HttpGet]
@@ -51,17 +54,13 @@ namespace MeuBackEndApi.Controllers
         [HttpPost("getMensagem")]
         public string GetMesagem([FromBody] string nome)
         {
-            return $"Olá, {nome} do back-end em C#";
+            return _mensagemService.GetMensagem(nome);
         }
 
         [HttpPost("getObjeto")]
         public Pessoa GetObjeto([FromBody] string nome)
         {
-            return new Pessoa
-            {
-                Nome = $"Olá {nome}",
-                Data = DateTime.Now.ToString("dd/MM/yyyy")
-            };
+            return _mensagemService.GetObjeto(nome);
         }
     }
 }
