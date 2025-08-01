@@ -38,9 +38,9 @@ namespace MeuBackEndApi.Src.Controllers
     [Route("api/mensagem")]
     public class MensagemController : ControllerBase
     {
-        private readonly IMensagemService _mensagemService;
+        private readonly IMensagemAppService _mensagemService;
 
-        public MensagemController(IMensagemService mensagemService)
+        public MensagemController(IMensagemAppService mensagemService)
         {
             _mensagemService = mensagemService;
         }

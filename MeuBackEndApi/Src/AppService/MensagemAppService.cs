@@ -3,7 +3,7 @@ using MeuBackEndApi.Src.Objects;
 
 namespace MeuBackEndApi.Src.AppService
 {
-    public class MensagemAppService : IMensagemService
+    public class MensagemAppService : IMensagemAppService
     {
         public string GetMensagem(string nome)
         {

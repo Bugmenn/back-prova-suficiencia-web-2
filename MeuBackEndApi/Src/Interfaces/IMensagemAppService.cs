@@ -2,7 +2,7 @@
 
 namespace MeuBackEndApi.Src.Interfaces
 {
-    public interface IMensagemService
+    public interface IMensagemAppService
     {
         string GetMensagem(string nome);
         Pessoa GetObjeto(string nome);
