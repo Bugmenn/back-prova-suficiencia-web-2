@@ -1,9 +1,8 @@
-using MeuBackEndApi.Src.AppService;
-using MeuBackEndApi.Src.Interfaces;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+//  adicionado o app service
 builder.Services.AddAppServices();
 
 builder.Services.AddControllers();

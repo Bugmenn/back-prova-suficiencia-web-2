@@ -17,3 +17,8 @@ Na próxima tela, selecione:
 ✅ Desmarque a opção "Enable OpenAPI" (se quiser deixar mais simples)
 
 Clique em Criar
+
+## Especificações do projeto
+Criado no visual studio community
+Usado ASP.NET Core Web API
+.NET versão 8.0
