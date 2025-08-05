@@ -1,16 +1,79 @@
+using MeuBackEndApi.Src.Data;
+using MeuBackEndApi.Src.Mappers;
+using MeuBackEndApi.Src.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-//  adicionado o app service
+// Adiciona os AppServices (camada de serviço e repositórios)
 builder.Services.AddAppServices();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(UsuarioProfile));
 
-// Permitindo o acesso por qualquer meio pela policy
+// Configurando o EF Core com PostgreSQL
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// JWT - Autenticação via Token
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "minha-chave-jwt-supersecreta";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "MeuBackEndApi";
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.RequireHttpsMetadata = false; // apenas para dev
+        options.SaveToken = true;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+// Controllers
+builder.Services.AddControllers();
+
+// Swagger + Autenticação JWT
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "RestAPIFurb", Version = "v1" });
+
+    var securityScheme = new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Description = "Insira o token JWT no formato: Bearer {seu_token}",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+    };
+
+    c.AddSecurityDefinition("Bearer", securityScheme);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        { securityScheme, new[] { "Bearer" } }
+    });
+});
+
+// Configuração do token
+builder.Services.AddSingleton<TokenService>();
+
+// CORS liberado para qualquer origem
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
@@ -23,10 +86,10 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// adicionando dentro do app para permitir qualquer acesso
+// Middlewares
+
 app.UseCors("AllowAll");
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -35,7 +98,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
+// Autenticação e Autorização
+app.UseAuthentication(); // ATENÇÃO: precisa vir antes do UseAuthorization!
 app.UseAuthorization();
+
+app.UsePathBase("/RestAPIFurb");
 
 app.MapControllers();
 
