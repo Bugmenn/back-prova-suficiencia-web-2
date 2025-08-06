@@ -29,7 +29,7 @@ namespace MeuBackEndApi.Src.Services
                 issuer: issuer,
                 audience: null,
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(2), // tempo até expirar
+                expires: DateTime.UtcNow.AddHours(1), // tempo até expirar
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             );
