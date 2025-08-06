@@ -19,6 +19,12 @@ namespace MeuBackEndApi.Src.Data
                 .HasMany(c => c.Produtos)
                 .WithMany()
                 .UsingEntity(j => j.ToTable("ComandaProdutos"));
+
+            modelBuilder.Entity<Comanda>()
+                .HasOne(c => c.Usuario)
+                .WithMany()
+                .HasForeignKey(c => c.IdUsuario)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

@@ -2,6 +2,7 @@
 using MeuBackEndApi.Src.Views;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace MeuBackEndApi.Src.Controllers
 {
@@ -18,9 +19,9 @@ namespace MeuBackEndApi.Src.Controllers
 
         [HttpGet]
         [Authorize]
-        public ActionResult<List<UsuarioView>> Listar()
+        public async Task<ActionResult<List<UsuarioView>>> Listar()
         {
-            return Ok(_service.Listar());
+            return Ok(await _service.Listar());
         }
 
         [HttpGet("{id}")]

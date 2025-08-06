@@ -30,3 +30,7 @@ dotnet add package AutoMapper.Extensions.Microsoft.DependencyInjection
 Criado no visual studio community
 Usado ASP.NET Core Web API
 .NET versão 8.0
+
+## gerar migração
+dotnet ef migrations add 'NomeDaMigracao'
+dotnet ef database update

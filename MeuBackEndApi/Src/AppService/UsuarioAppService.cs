@@ -2,6 +2,7 @@
 using MeuBackEndApi.Src.Interfaces;
 using MeuBackEndApi.Src.Models;
 using MeuBackEndApi.Src.Views;
+using System.Threading.Tasks;
 
 namespace MeuBackEndApi.Src.AppService
 {
@@ -16,9 +17,9 @@ namespace MeuBackEndApi.Src.AppService
             _mapper = mapper;
         }
 
-        public List<UsuarioView> Listar()
+        public async Task<List<UsuarioView>> Listar()
         {
-            return _repository.Listar().Select(usuario => new UsuarioView
+            return (await _repository.Listar()).Select(usuario => new UsuarioView
             {
                 Id = usuario.Id,
                 Nome = usuario.Nome,
@@ -26,9 +27,9 @@ namespace MeuBackEndApi.Src.AppService
             }).ToList();
         }
 
-        public UsuarioView BuscarPorId(int id)
+        public async Task<UsuarioView> BuscarPorId(int id)
         {
-            var usuario = _repository.BuscarPorId(id);
+            var usuario = await _repository.BuscarPorId(id);
             if (usuario == null) return null;
 
             return new UsuarioView

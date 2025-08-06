@@ -1,86 +1,71 @@
 ﻿using MeuBackEndApi.Src.Interfaces;
-using MeuBackEndApi.Src.Views;
+using MeuBackEndApi.Src.Views.comanda;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace MeuBackEndApi.Src.Controllers
 {
     [ApiController]
-    [Route("RestAPIFurb/[controller]")]
+    [Route("RestAPIFurb/comandas")]
     public class ComandaController : ControllerBase
     {
-        private readonly IComandaAppService _service;
+        private readonly IComandaAppService _comandaAppService;
 
-        public ComandaController(IComandaAppService service)
+        public ComandaController(IComandaAppService comandaAppService)
         {
-            _service = service;
+            _comandaAppService = comandaAppService;
         }
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult<List<ComandaUsuarioView>>> ListarUsuarios()
         {
-            var comandas = await _service.GetAllAsync();
-            return Ok(comandas);
+            var usuarios = await _comandaAppService.ListarUsuariosDasComandas();
+            return Ok(usuarios);
         }
 
         [HttpGet("{id}")]
         [Authorize]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<ActionResult<ComandaCompletaView>> BuscarPorId(int id)
         {
-            var comanda = await _service.GetByIdAsync(id);
+            var comanda = await _comandaAppService.BuscarComandaCompleta(id);
+
             if (comanda == null)
-                return NotFound(new { message = "Comanda não encontrada" });
+                return NotFound();
 
             return Ok(comanda);
         }
 
         [HttpPost]
-        [Authorize] // Protegendo o serviço, só usuário autenticado pode criar
-        public async Task<IActionResult> Create([FromBody] ComandaView novaComanda)
+        [Authorize]
+        public async Task<ActionResult<ComandaCriadaView>> Criar([FromBody] ComandaCompletaView view)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                await _service.AddAsync(novaComanda);
-                return CreatedAtAction(nameof(GetById), new { id = novaComanda.IdUsuario }, novaComanda);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var criada = await _comandaAppService.CriarComanda(view);
+            return CreatedAtAction(nameof(BuscarPorId), new { id = criada.Id }, criada);
         }
 
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> Update(int id, [FromBody] ComandaView view)
+        public async Task<IActionResult> AtualizarComanda(int id, [FromBody] ComandaUpdateView view)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            try
-            {
-                await _service.UpdateAsync(id, view);
-                return NoContent();
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(new { message = "Comanda não encontrada" });
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            await _comandaAppService.AtualizarComanda(id, view);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> RemoverComanda(int id)
         {
-            await _service.DeleteAsync(id);
-            return NoContent();
+            await _comandaAppService.RemoverComanda(id);
+
+            return Ok(new
+            {
+                success = new
+                {
+                    text = "comanda removida"
+                }
+            });
         }
     }
 }

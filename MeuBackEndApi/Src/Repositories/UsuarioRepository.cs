@@ -1,26 +1,24 @@
 ﻿using MeuBackEndApi.Src.Data;
 using MeuBackEndApi.Src.Interfaces;
 using MeuBackEndApi.Src.Models;
+using System.Threading.Tasks;
 
 namespace MeuBackEndApi.Src.Repositories
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class UsuarioRepository : GenericRepository<Usuario>, IUsuarioRepository
     {
-        private readonly AppDbContext _context;
-
-        public UsuarioRepository(AppDbContext context)
+        public UsuarioRepository(AppDbContext context) : base(context)
         {
-            _context = context;
         }
 
-        public List<Usuario> Listar() => _context.Usuarios.ToList();
+        public async Task<List<Usuario>> Listar() => await GetAllAsync();
 
-        public Usuario BuscarPorId(int id) => _context.Usuarios.FirstOrDefault(u => u.Id == id);
+        public async Task<Usuario> BuscarPorId(int id) => await GetByIdAsync(id);
 
-        public void Cadastrar(Usuario usuario)
+        public async Task Cadastrar(Usuario usuario)
         {
-            _context.Usuarios.Add(usuario);
-            _context.SaveChanges();
+            await AddAsync(usuario);
+            await SaveAsync();
         }
     }
 }

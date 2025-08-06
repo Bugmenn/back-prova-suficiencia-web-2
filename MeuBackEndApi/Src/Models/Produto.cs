@@ -4,6 +4,7 @@ namespace MeuBackEndApi.Src.Models
 {
     public class Produto
     {
+        [Key]
         public int Id { get; set; }
 
         [Required, StringLength(150)]

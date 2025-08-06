@@ -12,7 +12,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Adiciona os AppServices (camada de serviço e repositórios)
 builder.Services.AddAppServices();
 
-builder.Services.AddAutoMapper(typeof(UsuarioProfile));
+builder.Services.AddAutoMapper(
+    typeof(ComandaProfile),
+    typeof(ProdutoProfile),
+    typeof(UsuarioProfile)
+);
 
 // Configurando o EF Core com PostgreSQL
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -90,11 +94,8 @@ var app = builder.Build();
 
 app.UseCors("AllowAll");
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
@@ -104,7 +105,7 @@ app.UseRouting();
 app.UseAuthentication(); // ATENÇÃO: precisa vir antes do UseAuthorization!
 app.UseAuthorization();
 
-app.UsePathBase("/RestAPIFurb");
+//app.UsePathBase("/RestAPIFurb");
 
 app.MapControllers();
 

@@ -1,11 +1,11 @@
-﻿namespace MeuBackEndApi.Src.Views
+﻿namespace MeuBackEndApi.Src.Views.comanda
 {
-    public class ComandaView
+    public class ComandaCriadaView
     {
         public int Id { get; set; }
         public int IdUsuario { get; set; }
         public string NomeUsuario { get; set; } = null!;
         public string TelefoneUsuario { get; set; } = null!;
-        public List<ProdutoView> Produtos { get; set; } = new List<ProdutoView>();
+        public List<ProdutoView> Produtos { get; set; } = new();
     }
 }

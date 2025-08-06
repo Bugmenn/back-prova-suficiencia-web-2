@@ -1,4 +1,5 @@
 ﻿using MeuBackEndApi.Src.Models;
+using MeuBackEndApi.Src.Views.comanda;
 
 namespace MeuBackEndApi.Src.Interfaces
 {
@@ -10,6 +11,7 @@ namespace MeuBackEndApi.Src.Interfaces
         Task AddAsync(Comanda comanda);
         Task UpdateAsync(Comanda comanda);
         Task DeleteAsync(int id);
-        Task<List<Produto>> GetProdutosByIdsAsync(List<int> ids); // novo
+        Task<List<Produto>> GetProdutosByIdsAsync(List<int> ids);
+        Task<Comanda> CriarComanda(ComandaCompletaView novaComanda);
     }
 }

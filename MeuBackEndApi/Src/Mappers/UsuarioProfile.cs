@@ -9,7 +9,8 @@ namespace MeuBackEndApi.Src.Mappers
         public UsuarioProfile()
         {
             CreateMap<UsuarioView, Usuario>()
-                .ConstructUsing(view => new Usuario(view.Id, view.Usuario, view.Nome, view.Email, view.Senha, view.Telefone));
+                .ConstructUsing(view => new Usuario(view.Id, view.Usuario, view.Nome, view.Email, view.Senha, view.Telefone))
+                .ForMember(dest => dest.Senha, opt => opt.Ignore());
         }
     }
 }

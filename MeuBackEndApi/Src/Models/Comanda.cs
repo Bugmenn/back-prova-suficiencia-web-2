@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MeuBackEndApi.Src.Models
 {
@@ -9,6 +10,9 @@ namespace MeuBackEndApi.Src.Models
 
         [Required]
         public int IdUsuario { get; set; }
+
+        [ForeignKey("IdUsuario")]
+        public Usuario Usuario { get; set; } = null!;
 
         [Required, StringLength(100)]
         public string NomeUsuario { get; set; } = null!;

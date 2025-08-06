@@ -4,8 +4,8 @@ namespace MeuBackEndApi.Src.Interfaces
 {
     public interface IUsuarioAppService
     {
-        List<UsuarioView> Listar();
-        UsuarioView BuscarPorId(int id);
+        Task<List<UsuarioView>> Listar();
+        Task<UsuarioView> BuscarPorId(int id);
         void Cadastrar(UsuarioView view);
     }
 }
