@@ -2,6 +2,7 @@ using MeuBackEndApi.Src.Data;
 using MeuBackEndApi.Src.Mappers;
 using MeuBackEndApi.Src.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -104,6 +105,32 @@ app.UseRouting();
 // Autenticação e Autorização
 app.UseAuthentication(); // ATENÇÃO: precisa vir antes do UseAuthorization!
 app.UseAuthorization();
+
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+
+        context.Response.ContentType = "application/json";
+
+        if (exception is KeyNotFoundException)
+        {
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await context.Response.WriteAsync("{\"error\": \"" + exception.Message + "\"}");
+        }
+        else if (exception is ArgumentException)
+        {
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsync("{\"error\": \"" + exception.Message + "\"}");
+        }
+        else
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await context.Response.WriteAsync("{\"error\": \"Erro interno no servidor\"}");
+        }
+    });
+});
 
 //app.UsePathBase("/RestAPIFurb");
 

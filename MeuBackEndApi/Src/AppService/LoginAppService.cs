@@ -1,5 +1,4 @@
 ﻿using MeuBackEndApi.Src.Interfaces;
-using MeuBackEndApi.Src.Models;
 using MeuBackEndApi.Src.Services;
 using MeuBackEndApi.Src.Utils;
 using MeuBackEndApi.Src.Views;
@@ -22,16 +21,12 @@ namespace MeuBackEndApi.Src.AppService
             var usuario = _repository.BuscarPorUsuario(login.Usuario);
 
             if (usuario == null)
-            {
                 return new ResultadoLoginView { Sucesso = false, Mensagem = "Usuário não encontrado" };
-            }
 
             bool senhaValida = SenhaConverter.VerifyPassword(login.Senha, usuario.Senha);
 
             if (!senhaValida)
-            {
                 return new ResultadoLoginView { Sucesso = false, Mensagem = "Senha inválida" };
-            }
 
             var token = _tokenService.GerarToken(usuario.UsuarioLogin);
 

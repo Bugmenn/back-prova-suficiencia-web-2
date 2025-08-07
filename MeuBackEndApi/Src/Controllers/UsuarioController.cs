@@ -19,6 +19,7 @@ namespace MeuBackEndApi.Src.Controllers
 
         [HttpGet]
         [Authorize]
+        [EndpointSummary("Lista de usuários")]
         public async Task<ActionResult<List<UsuarioView>>> Listar()
         {
             return Ok(await _service.Listar());
@@ -26,9 +27,10 @@ namespace MeuBackEndApi.Src.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
-        public ActionResult<UsuarioView> BuscarPorId(int id)
+        [EndpointSummary("Pega o usuário pelo id")]
+        public async Task<ActionResult<UsuarioView>> BuscarPorId(int id)
         {
-            var usuario = _service.BuscarPorId(id);
+            var usuario = await _service.BuscarPorId(id);
             if (usuario == null)
                 return NotFound();
 
@@ -37,6 +39,7 @@ namespace MeuBackEndApi.Src.Controllers
 
         [HttpPost]
         [AllowAnonymous]
+        [EndpointSummary("Cadastro de usuário para fazer login")]
         public IActionResult Cadastrar([FromBody] UsuarioView view)
         {
             if (!ModelState.IsValid)

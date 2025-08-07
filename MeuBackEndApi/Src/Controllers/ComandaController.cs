@@ -2,7 +2,6 @@
 using MeuBackEndApi.Src.Views.comanda;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace MeuBackEndApi.Src.Controllers
 {
@@ -19,7 +18,8 @@ namespace MeuBackEndApi.Src.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<List<ComandaUsuarioView>>> ListarUsuarios()
+        [EndpointSummary("Pega a lista de todas as comandas, mas sem a informação do produto")]
+        public async Task<ActionResult<List<ComandaUsuarioView>>> ListarTodasComandas()
         {
             var usuarios = await _comandaAppService.ListarUsuariosDasComandas();
             return Ok(usuarios);
@@ -27,6 +27,7 @@ namespace MeuBackEndApi.Src.Controllers
 
         [HttpGet("{id}")]
         [Authorize]
+        [EndpointSummary("Pega a comanda por completo com base no id")]
         public async Task<ActionResult<ComandaCompletaView>> BuscarPorId(int id)
         {
             var comanda = await _comandaAppService.BuscarComandaCompleta(id);
@@ -39,6 +40,7 @@ namespace MeuBackEndApi.Src.Controllers
 
         [HttpPost]
         [Authorize]
+        [EndpointSummary("Cria a comanda e os produtos (caso não exista o produto)")]
         public async Task<ActionResult<ComandaCriadaView>> Criar([FromBody] ComandaCompletaView view)
         {
             var criada = await _comandaAppService.CriarComanda(view);
@@ -47,14 +49,16 @@ namespace MeuBackEndApi.Src.Controllers
 
         [HttpPut("{id}")]
         [Authorize]
+        [EndpointSummary("Atualiza os produtos da comanda com base no id")]
         public async Task<IActionResult> AtualizarComanda(int id, [FromBody] ComandaUpdateView view)
         {
             await _comandaAppService.AtualizarComanda(id, view);
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         [Authorize]
+        [EndpointSummary("Remove a comanda com base no id")]
         public async Task<IActionResult> RemoverComanda(int id)
         {
             await _comandaAppService.RemoverComanda(id);

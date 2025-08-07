@@ -1,5 +1,4 @@
 ﻿using MeuBackEndApi.Src.Interfaces;
-using MeuBackEndApi.Src.Services;
 using MeuBackEndApi.Src.Views;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +16,7 @@ namespace MeuBackEndApi.Src.Controllers
         }
 
         [HttpPost]
+        [EndpointSummary("login no qual se for bem sucedido ira retorna um token")]
         public IActionResult Login([FromBody] LoginView login)
         {
             var resultado = _loginAppService.RealizarLogin(login);

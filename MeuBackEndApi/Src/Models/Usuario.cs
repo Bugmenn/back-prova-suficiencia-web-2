@@ -1,11 +1,12 @@
-﻿using MeuBackEndApi.Src.Utils;
+﻿using MeuBackEndApi.Src.GenericModels;
+using MeuBackEndApi.Src.Utils;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MeuBackEndApi.Src.Models
 {
     [Table("Usuarios")]
-    public class Usuario
+    public class Usuario : IEntity
     {
         [Key]
         public int Id { get; set; }

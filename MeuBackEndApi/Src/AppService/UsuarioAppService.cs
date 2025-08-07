@@ -2,7 +2,6 @@
 using MeuBackEndApi.Src.Interfaces;
 using MeuBackEndApi.Src.Models;
 using MeuBackEndApi.Src.Views;
-using System.Threading.Tasks;
 
 namespace MeuBackEndApi.Src.AppService
 {
@@ -19,25 +18,18 @@ namespace MeuBackEndApi.Src.AppService
 
         public async Task<List<UsuarioView>> Listar()
         {
-            return (await _repository.Listar()).Select(usuario => new UsuarioView
-            {
-                Id = usuario.Id,
-                Nome = usuario.Nome,
-                Telefone = usuario.Telefone
-            }).ToList();
+            var listaUsuarios = await _repository.Listar();
+            return _mapper.Map<List<UsuarioView>>(listaUsuarios);
         }
 
         public async Task<UsuarioView> BuscarPorId(int id)
         {
             var usuario = await _repository.BuscarPorId(id);
-            if (usuario == null) return null;
 
-            return new UsuarioView
-            {
-                Id = usuario.Id,
-                Nome = usuario.Nome,
-                Telefone = usuario.Telefone
-            };
+            if (usuario == null)
+                throw new KeyNotFoundException("Usuário não encontrado");
+
+            return _mapper.Map<UsuarioView>(usuario);
         }
 
         public void Cadastrar(UsuarioView view)

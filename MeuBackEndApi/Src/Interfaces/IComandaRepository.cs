@@ -7,7 +7,6 @@ namespace MeuBackEndApi.Src.Interfaces
     {
         Task<List<Comanda>> GetAllAsync();
         Task<Comanda?> GetByIdAsync(int id);
-        Task<Comanda?> GetByIdWithProdutosAsync(int id);
         Task AddAsync(Comanda comanda);
         Task UpdateAsync(Comanda comanda);
         Task DeleteAsync(int id);

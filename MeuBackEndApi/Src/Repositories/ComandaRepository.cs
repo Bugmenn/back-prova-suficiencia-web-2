@@ -12,76 +12,64 @@ namespace MeuBackEndApi.Src.Repositories
         {
         }
 
-        public async Task<Comanda?> GetByIdWithProdutosAsync(int id)
+        public async Task<Comanda?> GetByIdAsync(int id)
         {
-            return await _context.Comandas
-                .Include(c => c.Produtos)
-                .FirstOrDefaultAsync(c => c.Id == id);
+            return await GetByIdAsync(id, include => include.Produtos);
         }
 
         public async Task UpdateAsync(Comanda comanda)
         {
-            _context.Comandas.Update(comanda);
-            await _context.SaveChangesAsync();
+            base.Update(comanda);
+            await SaveAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var comanda = await _context.Comandas.FindAsync(id);
+            var comanda = await GetByIdAsync(id);
+
             if (comanda != null)
             {
-                _context.Comandas.Remove(comanda);
-                await _context.SaveChangesAsync();
+                Delete(comanda);
+                await SaveAsync();
             }
         }
 
         public async Task<List<Produto>> GetProdutosByIdsAsync(List<int> ids)
         {
-            return await _context.Produtos
+            return await _context.Set<Produto>()
                 .Where(p => ids.Contains(p.Id))
                 .ToListAsync();
         }
 
         public async Task<Comanda> CriarComanda(ComandaCompletaView novaComanda)
         {
-            // IDs recebidos
+            var existeUsuario = await _context.Set<Usuario>().AnyAsync(a => a.Id == novaComanda.IdUsuario);
+
+            if (!existeUsuario)
+                throw new KeyNotFoundException("Usuário não encontrado");
+
             var idsRecebidos = novaComanda.Produtos.Select(p => p.Id).ToList();
 
-            // Buscar os produtos já existentes no banco
             var produtosExistentes = await GetProdutosByIdsAsync(idsRecebidos);
 
-            // Identificar os produtos que ainda não existem
             var idsExistentes = produtosExistentes.Select(p => p.Id).ToHashSet();
 
             var novosProdutos = novaComanda.Produtos
                 .Where(p => !idsExistentes.Contains(p.Id))
-                .Select(p => new Produto
-                {
-                    Id = p.Id,
-                    Nome = p.Nome,
-                    Preco = p.Preco
-                })
+                .Select(p => new Produto(p.Id, p.Nome, p.Preco))
                 .ToList();
 
-            // Adicionar novos produtos ao banco
             if (novosProdutos.Any())
             {
-                _context.Produtos.AddRange(novosProdutos);
-                await _context.SaveChangesAsync(); // salvar antes de associar à comanda
+                _context.Set<Produto>().AddRange(novosProdutos);
+                await _context.SaveChangesAsync();
             }
 
-            // Unir todos os produtos (novos + existentes)
             var todosProdutos = produtosExistentes.Concat(novosProdutos).ToList();
 
-            var nova = new Comanda
-            {
-                IdUsuario = novaComanda.IdUsuario,
-                NomeUsuario = novaComanda.NomeUsuario,
-                TelefoneUsuario = novaComanda.TelefoneUsuario,
-                Produtos = todosProdutos
-            };
+            var nova = new Comanda(0,novaComanda.IdUsuario, novaComanda.NomeUsuario, novaComanda.TelefoneUsuario, todosProdutos);
 
-            await _context.Comandas.AddAsync(nova);
+            await _context.Set<Comanda>().AddAsync(nova);
             await _context.SaveChangesAsync();
 
             return nova;

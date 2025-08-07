@@ -11,14 +11,12 @@ namespace MeuBackEndApi.Src.Mappers
         {
             CreateMap<ComandaUsuarioView, Comanda>().ReverseMap();
 
-            // Retorno da comanda criada
             CreateMap<Comanda, ComandaCriadaView>()
                 .ForMember(dest => dest.Produtos, opt => opt.MapFrom(src => src.Produtos));
 
             CreateMap<Comanda, ComandaCompletaView>()
                 .ForMember(dest => dest.Produtos, opt => opt.MapFrom(src => src.Produtos));
 
-            // Produto (entidade) → ProdutoView
             CreateMap<Produto, ProdutoView>().ReverseMap();
         }
     }

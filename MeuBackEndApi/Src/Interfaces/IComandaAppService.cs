@@ -1,5 +1,4 @@
-﻿using MeuBackEndApi.Src.Models;
-using MeuBackEndApi.Src.Views.comanda;
+﻿using MeuBackEndApi.Src.Views.comanda;
 
 namespace MeuBackEndApi.Src.Interfaces
 {

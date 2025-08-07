@@ -16,6 +16,7 @@ namespace MeuBackEndApi.Src.Services
 
         public string GerarToken(string usuario)
         {
+            // Pega as informações do AppSettings.json
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
             var issuer = _configuration["Jwt:Issuer"];
 

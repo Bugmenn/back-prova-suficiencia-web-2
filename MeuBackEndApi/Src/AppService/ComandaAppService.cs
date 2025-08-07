@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MeuBackEndApi.Src.Interfaces;
 using MeuBackEndApi.Src.Models;
-using MeuBackEndApi.Src.Views;
 using MeuBackEndApi.Src.Views.comanda;
 
 namespace MeuBackEndApi.Src.AppService
@@ -25,7 +24,7 @@ namespace MeuBackEndApi.Src.AppService
 
         public async Task<ComandaCompletaView> BuscarComandaCompleta(int id)
         {
-            var comanda = await _repository.GetByIdWithProdutosAsync(id);
+            var comanda = await _repository.GetByIdAsync(id);
 
             if (comanda == null)
                 throw new KeyNotFoundException("Comanda não encontrada");
@@ -35,6 +34,9 @@ namespace MeuBackEndApi.Src.AppService
 
         public async Task<ComandaCriadaView> CriarComanda(ComandaCompletaView novaComanda)
         {
+            if (novaComanda.IdUsuario == 0)
+                throw new ArgumentException("Id do usuário é inválido.");
+
             var comandaCriada = await _repository.CriarComanda(novaComanda);
 
             return _mapper.Map<ComandaCriadaView>(comandaCriada);
@@ -42,12 +44,11 @@ namespace MeuBackEndApi.Src.AppService
 
         public async Task AtualizarComanda(int id, ComandaUpdateView view)
         {
-            var comanda = await _repository.GetByIdWithProdutosAsync(id);
+            var comanda = await _repository.GetByIdAsync(id);
 
             if (comanda == null)
                 throw new KeyNotFoundException("Comanda não encontrada");
 
-            // Atualizar apenas os campos enviados
             if (view.Produtos != null)
             {
                 foreach (var produtoView in view.Produtos)
@@ -61,13 +62,7 @@ namespace MeuBackEndApi.Src.AppService
                     }
                     else
                     {
-                        // Se produto não existir na comanda, adiciona
-                        comanda.Produtos.Add(new Produto
-                        {
-                            Id = produtoView.Id,
-                            Nome = produtoView.Nome,
-                            Preco = produtoView.Preco
-                        });
+                        comanda.Produtos.Add(new Produto(produtoView.Id, produtoView.Nome, produtoView.Preco));
                     }
                 }
             }

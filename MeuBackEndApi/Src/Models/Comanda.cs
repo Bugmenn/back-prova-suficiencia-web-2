@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MeuBackEndApi.Src.GenericModels;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MeuBackEndApi.Src.Models
 {
-    public class Comanda
+    [Table("Comandas")]
+    public class Comanda : IEntity
     {
         [Key]
         public int Id { get; set; }
@@ -20,6 +22,18 @@ namespace MeuBackEndApi.Src.Models
         [Required, Phone]
         public string TelefoneUsuario { get; set; } = null!;
 
+        [Required]
         public List<Produto> Produtos { get; set; } = new List<Produto>();
+
+        public Comanda() { }
+
+        public Comanda(int? id, int idUsuario, string nomeUsuario, string telefoneUsuario, List<Produto> produtos)
+        {
+            Id = id ?? 0;
+            IdUsuario = idUsuario;
+            NomeUsuario = nomeUsuario;
+            TelefoneUsuario = telefoneUsuario;
+            Produtos = produtos;
+        }
     }
 }

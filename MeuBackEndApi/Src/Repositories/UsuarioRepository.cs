@@ -1,7 +1,6 @@
 ﻿using MeuBackEndApi.Src.Data;
 using MeuBackEndApi.Src.Interfaces;
 using MeuBackEndApi.Src.Models;
-using System.Threading.Tasks;
 
 namespace MeuBackEndApi.Src.Repositories
 {
@@ -11,9 +10,15 @@ namespace MeuBackEndApi.Src.Repositories
         {
         }
 
-        public async Task<List<Usuario>> Listar() => await GetAllAsync();
+        public async Task<List<Usuario>> Listar()
+        {
+            return await GetAllAsync();
+        }
 
-        public async Task<Usuario> BuscarPorId(int id) => await GetByIdAsync(id);
+        public async Task<Usuario> BuscarPorId(int id)
+        {
+            return await GetByIdAsync(id);
+        }
 
         public async Task Cadastrar(Usuario usuario)
         {

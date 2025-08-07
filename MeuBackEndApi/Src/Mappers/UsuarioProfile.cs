@@ -11,6 +11,9 @@ namespace MeuBackEndApi.Src.Mappers
             CreateMap<UsuarioView, Usuario>()
                 .ConstructUsing(view => new Usuario(view.Id, view.Usuario, view.Nome, view.Email, view.Senha, view.Telefone))
                 .ForMember(dest => dest.Senha, opt => opt.Ignore());
+
+            CreateMap<Usuario, UsuarioView>()
+                .ForMember(dest => dest.Usuario, opt => opt.MapFrom(src => src.UsuarioLogin));
         }
     }
 }
